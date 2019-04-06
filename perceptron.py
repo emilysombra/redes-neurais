@@ -10,12 +10,16 @@ class Perceptron:
         self.__activation = func  # Função de ativação (padrão: signal)
         self.epocas = -1  # Contador de épocas
 
+    def __add_bias(self, v):
+        new = []
+        for i in v:
+            new.append(np.insert(i, 0, -1))
+        return new
+
     def fit(self, stdX, D):
         # Adicionando entrada x0 = -1 (Valor padrão para o limiar)
-        X = []  # cada linha Xi de X := [-1] + stdX[i]
-        for xk in stdX:
-            X.append([-1] + xk)
-
+        # cada linha Xi de X := [-1] + stdX[i]
+        X = self.__add_bias(stdX)
         # Pesos iniciados aleatoriamente
         # Qtd de pesos == qtd de elementos em cada xi em X
         for i in range(len(X[0])):
@@ -32,7 +36,7 @@ class Perceptron:
             for i in range(len(X)):
                 xk = X[i]
                 dk = D[i]
-                # Produto interno de x e w (weights)
+                # Produto interno de xk e w (weights)
                 # Pode ser visto como um somatorio de wi * xi para todo i
                 u = float(np.dot(xk, self.__weights))
                 # Função de ativação (padrão: y = signal(u))
@@ -55,7 +59,20 @@ class Perceptron:
                 break
 
     def predict(self, X):
-        pass
+        # Lista de previsoes
+        previsoes = []
+        X = self.__add_bias(X)
+        for xk in X:
+            # Produto interno de x e w (weights)
+            # Pode ser visto como um somatorio de wi * xi para todo i
+            u = float(np.dot(xk, self.__weights))
+            # Função de ativação (padrão: y = signal(u))
+            y = self.__activation(u)
+            # Adiciona y à lista de previsões
+            previsoes.append(y)
+
+        # Retorna a lista de previsões
+        return previsoes
 
 
 if(__name__ == '__main__'):
